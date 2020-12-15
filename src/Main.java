@@ -19,7 +19,17 @@ public class Main
 		BoolVar ms = model.boolVar("Ms");
 		BoolVar mm = model.boolVar("Mm");
 
-		model.allEqual(bs, bm, cs, cm, ds, dm, ls, lm, ms, mm).post();
+		model.allEqual(bs, cs.xor(cm).boolVar()).post();
+		model.allEqual(bm, ds.not().and(dm.not()).or(ms.and(mm)).boolVar()).post();
+		model.allEqual(cs, bs.xor(bm).or(ms.not().and(mm.not())).boolVar()).post();
+		model.allEqual(cm, ds.and(dm).or(ls.and(lm)).boolVar()).post();
+		model.allEqual(ds, bs.not().and(bm.not()).or(cs.and(cm)).boolVar()).post();
+		model.allEqual(dm, ls.not().and(lm.not()).or(ms.not().and(mm.not())).boolVar()).post();
+		model.allEqual(ls, bs.not().and(bm.not()).or(ds.not().and(dm.not())).boolVar()).post();
+		model.allEqual(lm, cs.not().and(cm.not()).or(ms.not().and(mm.not())).boolVar()).post();
+		model.allEqual(ms, bs.and(bm).or(ls.and(lm)).boolVar()).post();
+		model.allEqual(mm, cs.xor(cm).or(ds.xor(dm)).boolVar()).post();
+
 		Solution solution = model.getSolver().findSolution();
 		if(solution != null)
 		{
